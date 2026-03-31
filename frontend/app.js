@@ -143,16 +143,17 @@ async function createContact() {
     setButtonState(btn, { disabled: false });
   }
 }
-
+let allFields = [];
 function renderFields(fields) {
+  allFields = fields; 
   const commonContainer = document.getElementById("commonFieldsContainer");
   const otherContainer = document.getElementById("otherFieldsContainer");
 
   commonContainer.innerHTML = "";
   otherContainer.innerHTML = "";
 
-  fields.forEach(field => {
-    if (commonFields.includes(field.name)) {
+fields.forEach((field, index) => {
+      if (commonFields.includes(field.name)) {
       const div = document.createElement("div");
       div.className = "col-md-6";
 
@@ -165,10 +166,9 @@ function renderFields(fields) {
 
       div.innerHTML = `
         <div class="form-check">
-          <input class="form-check-input" type="checkbox"
-            id="other_${field.name}"
-            data-field='${JSON.stringify(field)}'
-            onchange="addOtherField(this)">
+         <input class="form-check-input" type="checkbox"
+  data-index="${index}"
+  onchange="addOtherField(this)">
           <label class="form-check-label">
             ${field.label}
           </label>
@@ -184,19 +184,20 @@ function renderFields(fields) {
 function addOtherField(checkbox) {
   const commonContainer = document.getElementById("commonFieldsContainer");
 
-  if (checkbox.checked) {
-    const field = JSON.parse(checkbox.dataset.field);
+  const index = checkbox.dataset.index;
+  const field = allFields[index]; // ✅ SAFE access
 
+  if (checkbox.checked) {
     const div = document.createElement("div");
     div.className = "col-md-6 added-other-field";
-    div.dataset.name = checkbox.id;
+    div.dataset.name = index;
 
     div.innerHTML = getFieldHTML(field);
 
     commonContainer.appendChild(div);
   } else {
     const fieldDiv = commonContainer.querySelector(
-      `.added-other-field[data-name='${checkbox.id}']`
+      `.added-other-field[data-name='${index}']`
     );
     if (fieldDiv) fieldDiv.remove();
   }
