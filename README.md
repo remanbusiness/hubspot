@@ -76,7 +76,7 @@ https://domain-name.com:3000/
 ### Get Contact Fields
 
 ```
-POST https://domain-name.com:3000/get-contact-required-fields
+POST https://domain-name.com:3000/api/get-contact-required-fields
 ```
 #### CURL Example
 
@@ -91,13 +91,13 @@ curl -X POST https://domain-name.com:3000/get-contact-required-fields \
 ### ➤ Create Contact
 
 ```
-POST https://domain-name.com:3000/create-contact
+POST https://domain-name.com:3000/api/create-contact
 ```
 
 #### CURL Example
 
 ```bash
-curl -X POST https://domain-name.com:3000/create-contact \
+curl -X POST https://domain-name.com:3000/api/create-contact \
 -H "Content-Type: application/json" \
 -d '{
       "access_token": "YOUR_TOKEN",
@@ -115,13 +115,13 @@ curl -X POST https://domain-name.com:3000/create-contact \
 ### ➤ Get Company Fields
 
 ```
-POST https://domain-name.com:3000/get-company-required-fields
+POST https://domain-name.com:3000/api/get-company-required-fields
 ```
 
 #### CURL Example
 
 ```bash
-curl -X POST https://domain-name.com:3000/get-company-required-fields \
+curl -X POST https://domain-name.com:3000/api/get-company-required-fields \
 -H "Content-Type: application/json" \
 -d '{
       "access_token": "YOUR_TOKEN",
@@ -131,13 +131,13 @@ curl -X POST https://domain-name.com:3000/get-company-required-fields \
 ### ➤ Create Company
 
 ```
-POST http://test-domain/hubspot/companies
+POST https://domain-name.com:3000/api/create-company
 ```
 
 #### CURL Example
 
 ```bash
-curl -X POST https://domain-name.com:3000/create-company \
+curl -X POST https://domain-name.com:3000/api/create-company \
 -H "Content-Type: application/json" \
 -d '{
       "access_token": "YOUR_TOKEN",
@@ -177,7 +177,8 @@ access_token
 
 #  Notes
 
-* Make sure Node server is running before using UI
-* Token must be valid (HubSpot)
+* Make sure the Node server is running before using the UI.
+* The token must be valid (HubSpot).
+* Replace https://domain-name.com with your domain name in server.js and index.html.
 
 ---
