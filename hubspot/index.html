@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API Docs</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #0f172a;
+            color: #fff;
+        }
+        html, body {
+            height: 100%;
+        }
+
+        .container-fluid, .row {
+            height: 100%;
+        }
+        .col-9 {
+            height: 100%;
+            overflow-y: auto;
+        }
+        .sidebar {
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+            height: 100vh;
+            overflow-y: auto;
+            background: #1e293b;
+        }
+        .endpoint {
+            cursor: pointer;
+            padding: 10px;
+            border-bottom: 1px solid #334155;
+        }
+        .endpoint:hover {
+            border-radius: 10px;
+            background: #334155;
+        }
+        .method {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .GET { color: #22c55e; }
+        .POST { color: #3b82f6; }
+        .PUT { color: #eab308; }
+        .DELETE { color: #ef4444; }
+
+        pre {
+            background: #020617;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        pre#response {
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .sidebar-header {
+            background: #334155;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- Sidebar -->
+        <div class="col-3 sidebar pt-4">
+            <div class="sidebar-header text-center py-3 mb-2 mt-2">
+                <h4>Hubspot API DOC</h4>
+            </div>
+            <div id="endpointList"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="col-9 p-4">
+
+            <h3 id="title">Select API</h3>
+            <p id="description"></p>
+
+            <div class="mb-3">
+                <label>Method</label>
+                <select id="method" class="form-control">
+                    <option>GET</option>
+                    <option>POST</option>
+                    <option>PUT</option>
+                    <option>DELETE</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label>URL</label>
+                <input type="text" id="url" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label>Body (JSON)</label>
+                <textarea id="body" class="form-control" rows="6"></textarea>
+            </div>
+
+            <button class="btn btn-success" onclick="sendRequest()">Send Request</button>
+
+            <hr>
+
+            <h5>Response</h5>
+            <pre id="response">No response yet...</pre>
+
+        </div>
+    </div>
+</div>
+
+<script>
+const apiDocs = [
+    {
+        name: "Get Contact Fields",
+        method: "GET",
+        url: "https://traini.callhub.ai/hubspot/contacts?access_token=*******",
+        description: "Fetch all contact fields"
+    },
+    {
+        name: "Create Contact Record",
+        method: "POST",
+        url: "https://traini.callhub.ai/hubspot/contacts",
+        description: "Create new Contact",
+        body: {
+            "access_token":"************",
+            "email": "john.doe@example.com",
+            "firstname": "John",
+            "lastname": "Doe",
+            "phone": "+1234567890",
+            "company": "Example Company",
+            "jobtitle": "Software Engineer",
+            "website": "https://example.com",
+            "city": "New York",
+            "state": "NY",
+            "zip": "10001",
+            "country": "USA"
+        }
+    },
+    {
+        name: "Get Company Fields",
+        method: "GET",
+        url: "https://traini.callhub.ai/hubspot/companies?access_token=*******",
+        description: "Fetch all company fields"
+    },
+    {
+        name: "Create Company Record",
+        method: "POST",
+        url: "https://traini.callhub.ai/hubspot/companies",
+        description: "Create new company record",
+        body: {
+            "access_token":"************",
+            "name": "Acme Corporation",
+            "domain": "acme.com",
+            "phone": "+1-800-123-4567",
+            "city": "San Francisco",
+            "state": "California",
+            "country": "USA",
+            "numberofemployees": "100",
+            "annualrevenue": "5000000",
+            "website": "https://test.com",
+            "description": "A leading provider of tech solutions"
+        }
+    }
+];
+
+function loadEndpoints() {
+    const list = document.getElementById("endpointList");
+
+    apiDocs.forEach((api, i) => {
+        const div = document.createElement("div");
+        div.className = "endpoint";
+
+        div.innerHTML = `
+            <span class="method ${api.method}">${api.method}</span>
+            ${api.name}
+        `;
+
+        div.onclick = () => showEndpoint(i);
+        list.appendChild(div);
+    });
+}
+
+function showEndpoint(i) {
+    document.getElementById('method').disabled = true;
+    // Select the fields
+    const methodField = document.getElementById("method");
+    const urlField = document.getElementById("url");
+    const bodyFieldReset = document.getElementById("body");
+    const responseEl = document.getElementById("response");
+
+    // Reset response and body whenever a field changes
+    [methodField, urlField, bodyFieldReset].forEach(field => {
+        field.addEventListener("input", () => {
+            responseEl.innerText = "No response yet...";
+        });
+    });
+    const api = apiDocs[i];
+
+    document.getElementById("title").innerText = api.name;
+    document.getElementById("description").innerText = api.description || "";
+
+    const methodSelect = document.getElementById("method");
+    methodSelect.value = api.method;
+
+    const bodyField = document.getElementById("body");
+    if (api.method === "GET" || api.method === "DELETE") {
+        bodyField.value = "";
+        bodyField.readOnly = true;
+        bodyField.style.backgroundColor = "#2a2e3b";
+    } else {
+        bodyField.value = api.body
+            ? JSON.stringify(api.body, null, 2)
+            : "";
+        bodyField.readOnly = false;
+        bodyField.style.backgroundColor = "#fff";
+    }
+
+    document.getElementById("url").value = api.url;
+}
+
+function sendRequest() {
+    const button = document.querySelector("button");
+    const responseEl = document.getElementById("response");
+
+    // Show loading
+    button.disabled = true;
+    button.innerText = "Loading...";
+    responseEl.innerText = "Loading...";
+
+    const method = document.getElementById("method").value;
+    const url = document.getElementById("url").value;
+    const body = document.getElementById("body").value;
+
+    fetch(url, {
+        method: method,
+        headers: { "Content-Type": "application/json" },
+        body: method !== "GET" ? body : null
+    })
+    .then(res => res.text())
+    .then(data => {
+        try {
+            responseEl.innerText = JSON.stringify(JSON.parse(data), null, 2);
+        } catch {
+            responseEl.innerText = data;
+        }
+    })
+    .catch(err => {
+        responseEl.innerText = err;
+    })
+    .finally(() => {
+        button.disabled = false;
+        button.innerText = "Send Request";
+    });
+}
+
+loadEndpoints();
+</script>
+
+</body>
+</html>
