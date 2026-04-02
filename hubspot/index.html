@@ -119,14 +119,17 @@
 const apiDocs = [
     {
         name: "Get Contact Fields",
-        method: "GET",
-        url: "https://traini.callhub.ai/hubspot/contacts?access_token=*******",
-        description: "Fetch all contact fields"
+        method: "POST",
+        url: "https://domain-name.com:3000/api/get-contact-required-fields",
+        description: "Fetch all contact fields",
+        body: {
+            "access_token":"************",
+        }
     },
     {
         name: "Create Contact Record",
         method: "POST",
-        url: "https://traini.callhub.ai/hubspot/contacts",
+        url: "https://domain-name.com:3000/api/create-contact",
         description: "Create new Contact",
         body: {
             "access_token":"************",
@@ -145,14 +148,17 @@ const apiDocs = [
     },
     {
         name: "Get Company Fields",
-        method: "GET",
-        url: "https://traini.callhub.ai/hubspot/companies?access_token=*******",
-        description: "Fetch all company fields"
+        method: "POST",
+        url: "https://domain-name.com:3000/api/get-company-required-fields",
+        description: "Fetch all company fields",
+        body: {
+            "access_token":"************",
+        }
     },
     {
         name: "Create Company Record",
         method: "POST",
-        url: "https://traini.callhub.ai/hubspot/companies",
+        url: "https://domain-name.com:3000/api/create-company",
         description: "Create new company record",
         body: {
             "access_token":"************",

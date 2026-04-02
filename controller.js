@@ -49,36 +49,6 @@ export const getContactRequiredFields = async (req, res) => {
                 message: 'Failed to fetch fields'
             });
         }
-        // 3️⃣ Define a list of commonly used contact fields
-        // const commonFields = [
-        //     'email', 'firstname', 'lastname', 'phone', 'company', 'jobtitle',
-        //     'website', 'address', 'city', 'state', 'zip', 'country',
-        //     'lifecyclestage', 'hs_lead_status', 'hs_analytics_source', 'hs_language',
-        //     'twitterhandle'
-        // ];
-
-        // const fields = [];
-
-        // // Include only the common fields from HubSpot response
-        // if (data?.results?.length) {
-        //     const apiFields = {};
-        //     data.results.forEach(prop => {
-        //         apiFields[prop.name] = prop;
-        //     });
-        //     commonFields.forEach(fieldName => {
-        //         if (apiFields[fieldName]) {
-        //             const prop = apiFields[fieldName];
-        //             fields.push({
-        //                 name: prop.name,
-        //                 label: prop.label || prop.name,
-        //                 type: prop.type,
-        //                 fieldType: prop.fieldType,
-        //                 required: prop.required || false,
-        //                 options: prop.options || []
-        //             });
-        //         }
-        //     });
-        // }
         return res.json({
             status: true,
             message: 'Fields fetched successfully',
@@ -96,10 +66,10 @@ export const getContactRequiredFields = async (req, res) => {
 
 export const createContact = async (req, res) => {
     try {
-        const fieldsData = req.body?.allData || [];
+        const body = req.body || {};
 
         // Extract access token from request data
-        const accessToken = fieldsData.find(f => f.name === 'access_token')?.value?.trim() || '';
+        const accessToken = body.access_token?.trim();
 
         if (!accessToken) {
             return res.json({
@@ -111,18 +81,11 @@ export const createContact = async (req, res) => {
         const webUrl = 'https://api.hubapi.com/crm/v3/objects/contacts';
 
         // Construct properties object to send to HubSpot API
-        const properties = fieldsData.reduce((acc, field) => {
-            const name = field?.name?.trim() || '';
-            let value = field?.value ?? '';
+        const { access_token, ...rest } = body;
 
-            if (!name || name === 'access_token') {
-                return acc;
-            }
-
-            acc[name] = value;
-            return acc;
-        }, {});
-
+        const properties = Object.fromEntries(
+            Object.entries(rest).filter(([key, value]) => value !== undefined && value !== null && value !== '')
+        );
         const { data, status } = await axios.post(
             webUrl,
             { properties },
@@ -250,10 +213,10 @@ export const getCompanyRequiredFields = async (req, res) => {
 
 export const createCompany = async (req, res) => {
     try {
-        const fieldsData = req.body?.allData || [];
+        const body = req.body || {};
 
         // Extract access token from request data
-        const accessToken = fieldsData.find(f => f.name === 'access_token')?.value?.trim() || '';
+        const accessToken = body.access_token?.trim();
 
         if (!accessToken) {
             return res.json({
@@ -265,17 +228,11 @@ export const createCompany = async (req, res) => {
         const webUrl = 'https://api.hubapi.com/crm/v3/objects/companies';
 
         // Construct properties object to send to HubSpot API
-        const properties = fieldsData.reduce((acc, field) => {
-            const name = field?.name?.trim() || '';
-            let value = field?.value ?? '';
+        const { access_token, ...rest } = body;
 
-            if (!name || name === 'access_token') {
-                return acc;
-            }
-
-            acc[name] = value;
-            return acc;
-        }, {});
+        const properties = Object.fromEntries(
+            Object.entries(rest).filter(([key, value]) => value !== undefined && value !== null && value !== '')
+        );
 
         const { data, status } = await axios.post(
             webUrl,
